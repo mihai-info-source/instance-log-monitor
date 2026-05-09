@@ -1,4 +1,6 @@
 # Application Instance Monitor
+Author      : Mihai (Logic, Architecture, Requirements)
+Engineering : AI-assisted refactoring via Claude & Gemini
 
 A robust Python-based monitoring tool designed to verify the health of application instances on Linux servers. It checks for log existence, file modification freshness (SLA), and specific success strings within log files.
 
