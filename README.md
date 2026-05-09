@@ -19,4 +19,4 @@ No external dependencies required (uses standard Python 3 libraries).
    ```bash
    chmod +x app_log_monitor.py
 ## Preview
-It can be ran on external sites such as https://playcode.io/python-compiler 
+It can be run on external sites such as https://playcode.io/python-compiler 
