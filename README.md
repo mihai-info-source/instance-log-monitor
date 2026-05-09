@@ -17,6 +17,6 @@ No external dependencies required (uses standard Python 3 libraries).
 1. Clone this repository or download `instance_health_monitor.py`.
 2. Ensure the script has execution permissions:
    ```bash
-   chmod +x app_log_monitor.py
+   chmod +x instance_health_monitor.py
 ## Preview
 It can be run on external sites such as https://playcode.io/python-compiler 
