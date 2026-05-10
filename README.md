@@ -1,4 +1,4 @@
-
+# Application Instance Monitor
 
 **Author:** Mihai (Logic, Architecture, Requirements)
 
@@ -49,4 +49,4 @@ No external dependencies required (uses standard Python 3.x libraries).
 - **Online Compiler:** The script logic can be previewed on external sites such as [PlayCode Python Compiler](https://playcode.io/python-compiler).
 
 ## Output demo
-<img width="1440" height="2866" alt="image" src="https://github.com/user-attachments/assets/cdafb017-f5a4-4336-a40f-06eadc624e5d" /># Application Instance Monitor
+<img width="1440" height="2866" alt="image" src="https://github.com/user-attachments/assets/cdafb017-f5a4-4336-a40f-06eadc624e5d" />
