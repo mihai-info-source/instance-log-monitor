@@ -4,7 +4,7 @@
 
 **Engineering:** AI-assisted refactoring via Claude & Gemini
 
-A robust Python-based monitoring tool designed to verify the health of application instances on Linux (Red Hat) servers. It automates the verification of log existence, file modification freshness (SLA), and specific success strings within log files.
+An automated monitoring tool for Linux servers that scans a specified directory for application instances (identified by a naming convention), then for each instance verifies that a log file exists, is recent within a configurable time threshold, and contains a specific success string confirming a completed sync. Results are output to both the console and a timestamped log file, which is automatically renamed to indicate failure if any check does not pass. The script runs once and exits immediately.
 
 ---
 
