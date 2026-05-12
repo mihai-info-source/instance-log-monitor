@@ -6,6 +6,8 @@
 
 An automated monitoring tool for Linux servers that scans a specified directory for application instances (identified by a naming convention), then for each instance verifies that a log file exists, is recent within a configurable time threshold, and contains a specific success string confirming a completed sync. Results are output to both the console and a timestamped log file, which is automatically renamed to indicate failure if any check does not pass. The script runs once and exits immediately.
 
+The tool is designed to run per-host, not as a centralized scanner. Typical deployment assumes tens of instances per server, with horizontal scaling achieved by running the script independently on multiple nodes.
+
 **Problem Statement/What it actually solves:**
 Standard monitoring tools only tell you if a service is 'Up' or 'Down'. They miss silent failures, cases where the app is running, but synchronization has stalled. Previously, this required 2+ hours of manual, error-prone log checking every day.
 This tool replaces that manual grind with a server-level automation that audits log freshness and sync success patterns. It effectively eliminates human error and ensures that 'active' services are actually doing their job, not just idling while data stays stuck.
