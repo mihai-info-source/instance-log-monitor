@@ -4,39 +4,67 @@
 
 **Engineering:** AI-assisted refactoring via Claude & Gemini
 
-An automated monitoring tool (log-based health inference system) for Linux servers that scans a specified directory for application instances (identified by a naming convention), then for each instance verifies that a log file exists, is recent within a configurable time threshold, and contains a specific success string confirming a completed sync. Results are output to both the console and a timestamped log file, which is automatically renamed to indicate failure if any check does not pass. The script runs once and exits immediately.
 
-The tool is designed to run per-host, not as a centralized scanner. Typical deployment assumes tens of instances per server, with horizontal scaling achieved by running the script independently on multiple nodes.
+## Overview
 
-Performance: Typical execution time is under 10 seconds for ~10–50 instances per host. Execution is I/O bound and scales linearly with number of instances and log file size; no network calls or external dependencies are involved.
+Standard monitoring systems typically report service availability (up/down), but fail to detect silent failures where services are running while critical synchronization processes are stalled.
 
-Log files are expected in /logs/ subdirectory and are discovered using *.log wildcard (no naming constraints beyond extension).
+This tool implements a log-based health inference system for Linux environments, focusing on functional correctness rather than process availability.
 
-A log file is considered recent if its last modification timestamp (mtime) is within the last N minutes (default: 15) relative to script execution time.
 
-Freshness is determined using filesystem modification time (mtime), which serves as a proxy for last log write activity.
+## How it works
 
-Table-sync detection uses a heuristic regex pattern matching numeric batch identifiers in the form DDD+/DDD+, serving as indicators of ongoing data synchronization activity. Occurrence within a 15-minute window provides a proxy signal for sustained synchronization workload, which in this system is typically associated with large dataset refresh operations triggered by user or system-level actions.
+The system scans a directory of application instances (based on naming convention) and performs the following checks per instance:
 
-Uses os._exit() to guarantee immediate termination in automated environments (e.g., cron / orchestration pipelines), avoiding lingering processes.
+- Verifies presence of log files (`*.log` under `/logs/`)
+- Validates log freshness using filesystem modification time (mtime-based threshold, default: 15 minutes)
+- Confirms successful synchronization via log pattern matching
 
-**Problem Statement/What it actually solves:**
-Standard monitoring tools only tell you if a service is 'Up' or 'Down'. They miss silent failures, cases where the app is running, but synchronization has stalled. Previously, this required 2+ hours of manual, error-prone log checking every day.
-This tool replaces that manual grind with a server-level automation that audits log freshness and sync success patterns. It effectively eliminates human error and ensures that 'active' services are actually doing their job, not just idling while data stays stuck.
+Results are printed to console and written to a timestamped execution log. If any check fails, the log file is automatically renamed with `_FAILED` for immediate RCA.
 
----
+
+
+## Design & Architecture
+
+- Designed for per-host execution, not centralized monitoring  
+- Typically runs on servers with 10–50 instances  
+- Horizontally scalable via deployment across multiple nodes  
+- Fully I/O-bound (no network calls, no external dependencies)  
+- Typical execution time: <10 seconds per host  
+
+
+## Detection Logic
+
+- **Freshness check:** filesystem mtime used as proxy for last log activity  
+- **Sync validation:** log markers confirm completed synchronization  
+- **Extended workload detection:** regex pattern `DDD+/DDD+` identifies batch synchronization activity, typically associated with large dataset refresh operations  
+
+
+## Why it exists
+
+Traditional monitoring systems focus on infrastructure health, but not execution state.
+
+This tool was built to detect cases where:
+- services appear healthy  
+- but data synchronization is silently stalled  
+
+It replaces manual log inspection (~2+ hours/day) with automated validation of system activity and functional correctness.
+
+
 
 ## Features
-- **Automatic Discovery:** Scans a base directory for instances ending in `_LTD` and sorts them alphabetically.
-- **Log Freshness Check:** Ensures the application is actively writing logs within a configurable time threshold (SLA monitoring).
-- **Content Validation:** Verifies that the synchronization process has finished successfully by scanning the log tail for specific patterns.
-- **Fail-Safe Logging:** Generates its own timestamped logs. If any instance fails, the script log is automatically renamed with a `_FAILED` suffix for immediate RCA (Root Cause Analysis).
-- **Production Ready:** Uses `os._exit()` for a guaranteed hard stop, preventing lingering processes in high-availability environments.
-- **Regex Powered:** Uses optimized Regular Expressions to scan for Tririga sync patterns and specific table-sync activity.
+
+- Automatic instance discovery (`*_LTD`)
+- Log freshness validation (SLA threshold-based)
+- Sync success verification via log parsing
+- Fail-safe logging with `_FAILED` tagging
+- Regex-based detection of batch synchronization activity
+- Single-run execution model (cron-friendly)
 
 ---
 
-## Installation & Usage
+
+##  **Usage:**
 
 No external dependencies required (uses standard Python 3.x libraries).
 
@@ -54,16 +82,15 @@ No external dependencies required (uses standard Python 3.x libraries).
     python3 instance_health_monitor.py --base-dir /custom/path --threshold 30
     ```
 
----
 
-## Exit Codes
+##  **Exit Codes:**
 - **Code 0 (OK):** All discovered instances passed all checks (Fresh log + Sync confirmed).
 - **Code 1 (FAILURE):** One or more instances failed a check. Script log is saved as `*_FAILED.log`.
 - **Code 2 (CRITICAL):** No `*_LTD` directories found in the base path. Configuration issue.
 
 ---
 
-## Preview
+## **Preview:**
 - **Online Compiler:** The script logic can be previewed on external sites such as [PlayCode Python Compiler](https://playcode.io/python-compiler).
 
 ## Output demo
