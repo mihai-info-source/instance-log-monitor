@@ -8,6 +8,14 @@ An automated monitoring tool for Linux servers that scans a specified directory 
 
 The tool is designed to run per-host, not as a centralized scanner. Typical deployment assumes tens of instances per server, with horizontal scaling achieved by running the script independently on multiple nodes.
 
+Performance: Typical execution time is under 10 seconds for ~10–50 instances per host. Execution is I/O bound and scales linearly with number of instances and log file size; no network calls or external dependencies are involved.
+
+Log files are expected in /logs/ subdirectory of each instance and must match *.log . 
+
+A log file is considered recent if its last modification timestamp (mtime) is within the last N minutes (default: 15) relative to script execution time.
+
+Table-sync detection uses a regex pattern matching numeric ID pairs in the format DDD+/DDD+ (e.g. 1234/5678) to identify synchronization events in log streams.
+
 **Problem Statement/What it actually solves:**
 Standard monitoring tools only tell you if a service is 'Up' or 'Down'. They miss silent failures, cases where the app is running, but synchronization has stalled. Previously, this required 2+ hours of manual, error-prone log checking every day.
 This tool replaces that manual grind with a server-level automation that audits log freshness and sync success patterns. It effectively eliminates human error and ensures that 'active' services are actually doing their job, not just idling while data stays stuck.
