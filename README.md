@@ -16,7 +16,7 @@ A log file is considered recent if its last modification timestamp (mtime) is wi
 
 Freshness is determined using filesystem modification time (mtime), which serves as a proxy for last log write activity.
 
-Table-sync detection uses a heuristic regex pattern matching numeric batch identifiers in the form DDD+/DDD+, used as indicators of ongoing data synchronization activity. Occurrence of these events within the last 15 minutes provides a proxy signal for sustained synchronization workload. In this environment, sustained batch activity is typically correlated with large dataset refresh operations triggered by user or system-level reload events.
+Table-sync detection uses a heuristic regex pattern matching numeric batch identifiers in the form DDD+/DDD+, serving as indicators of ongoing data synchronization activity. Occurrence within a 15-minute window provides a proxy signal for sustained synchronization workload, which in this system is typically associated with large dataset refresh operations triggered by user or system-level actions.
 
 Uses os._exit() to guarantee immediate termination in automated environments (e.g., cron / orchestration pipelines), avoiding lingering processes.
 
