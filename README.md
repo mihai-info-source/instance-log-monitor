@@ -4,17 +4,21 @@
 
 **Engineering:** AI-assisted refactoring via Claude & Gemini
 
-An automated monitoring tool for Linux servers that scans a specified directory for application instances (identified by a naming convention), then for each instance verifies that a log file exists, is recent within a configurable time threshold, and contains a specific success string confirming a completed sync. Results are output to both the console and a timestamped log file, which is automatically renamed to indicate failure if any check does not pass. The script runs once and exits immediately.
+An automated monitoring tool (log-based health inference system) for Linux servers that scans a specified directory for application instances (identified by a naming convention), then for each instance verifies that a log file exists, is recent within a configurable time threshold, and contains a specific success string confirming a completed sync. Results are output to both the console and a timestamped log file, which is automatically renamed to indicate failure if any check does not pass. The script runs once and exits immediately.
 
 The tool is designed to run per-host, not as a centralized scanner. Typical deployment assumes tens of instances per server, with horizontal scaling achieved by running the script independently on multiple nodes.
 
 Performance: Typical execution time is under 10 seconds for ~10–50 instances per host. Execution is I/O bound and scales linearly with number of instances and log file size; no network calls or external dependencies are involved.
 
-Log files are expected in /logs/ subdirectory of each instance and must match *.log . 
+Log files are expected in /logs/ subdirectory and are discovered using *.log wildcard (no naming constraints beyond extension).
 
 A log file is considered recent if its last modification timestamp (mtime) is within the last N minutes (default: 15) relative to script execution time.
 
-Table-sync detection uses a regex pattern matching numeric ID pairs in the format DDD+/DDD+ (e.g. 1234/5678) to identify synchronization events in log streams.
+Freshness is determined using filesystem modification time (mtime), which serves as a proxy for last log write activity.
+
+Table-sync detection uses a heuristic regex pattern matching numeric batch identifiers in the form DDD+/DDD+, used as indicators of ongoing data synchronization activity. Presence of these events within the last 15 minutes provides a proxy signal that large dataset synchronization is still progressing rather than stalled.
+
+Uses os._exit() to guarantee immediate termination in automated environments (e.g., cron / orchestration pipelines), avoiding lingering processes.
 
 **Problem Statement/What it actually solves:**
 Standard monitoring tools only tell you if a service is 'Up' or 'Down'. They miss silent failures, cases where the app is running, but synchronization has stalled. Previously, this required 2+ hours of manual, error-prone log checking every day.
