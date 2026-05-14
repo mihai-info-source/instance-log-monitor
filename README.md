@@ -1,6 +1,7 @@
 # Application Instance Monitor
  
 **Author:** Mihai (Logic, Architecture, Requirements)
+
 Implemented with AI-assisted refactoring and documentation support.
  
  
