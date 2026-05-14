@@ -53,9 +53,12 @@ It replaces manual log inspection (~2+ hours/day) with automated validation of s
 - Regex-based detection of batch synchronization activity
 - Single-run execution model (cron-friendly)
 - Dockerized: fully containerized for portable deployment across different Linux distributions without Python environment management
+- Kubernetes-ready: deployable as a diagnostic Pod within a cluster
 ## Usage
  
-This tool can be run as a standalone Python script or via Docker for improved isolation and portability.
+This tool can be run as a standalone Python script, via Docker, or as a Kubernetes Pod.
+ 
+---
  
 ### Option A: Standalone Script
  
@@ -75,7 +78,9 @@ No external dependencies required (uses standard Python 3.x libraries).
    python3 instance_health_monitor.py --base-dir /custom/path --threshold 30
    ```
  
-### Option B: Docker (Recommended)
+---
+ 
+### Option B: Docker
  
 Containerization ensures a consistent environment and simplifies timezone management.
  
@@ -99,14 +104,111 @@ Containerization ensures a consistent environment and simplifies timezone manage
  
 *Note: Replace `/opt/apps/Company` with your actual instances path.*
  
+---
+ 
+### Option C: Kubernetes (Cloud-Native Deployment)
+ 
+The tool is Kubernetes-ready, allowing you to run it as a diagnostic Pod within a cluster. This is ideal for environments where application instances are managed across K8s nodes.
+ 
+1. **Build and load the image into Minikube:**
+   ```bash
+   docker build -t health-monitor:v2 .
+   minikube image load health-monitor:v2
+   ```
+ 
+2. **Mount the instances directory (keep this terminal open):**
+   ```bash
+   minikube mount /opt/apps/Company:/opt/apps/Company
+   ```
+ 
+3. **Deploy the Pod:**
+   ```bash
+   kubectl apply -f monitor-pod.yaml
+   ```
+ 
+4. **Check execution results:**
+   ```bash
+   kubectl logs instance-monitor
+   ```
+ 
+> [!NOTE]
+> The `minikube mount` process must stay alive in a separate terminal for the volume to remain accessible inside the cluster.
+ 
+---
  
 ## Exit Codes
  
 - **Code 0 (OK):** All discovered instances passed all checks (Fresh log + Sync confirmed).
 - **Code 1 (FAILURE):** One or more instances failed a check. Script log is saved as `*_FAILED.log`.
 - **Code 2 (CRITICAL):** No `*_LTD` directories found in the base path. Configuration issue.
-## Preview
+---
  
-- **Online Compiler:** The script logic can be previewed on external sites such as [PlayCode Python Compiler](https://playcode.io/python-compiler).
-## Output demo
+## Output Demo
+ 
+Real execution output captured from a Kubernetes Pod deployment via `kubectl logs`:
+ 
+```text
+=====================================================================================
+  Company Instance Monitor
+  Started at     : 2026-05-14 05:32:21
+  Base directory : /opt/apps/Company
+  Threshold      : 15 minutes
+=====================================================================================
+ 
+Instances found: 1
+  1. Instance1_LTD
+ 
+---------------------------------------------
+  Checking: Instance1_LTD
+---------------------------------------------
+    **** ERROR: 'Tririga Finished Synch Succesfully' not found in last 1000 lines ****
+ 
+=====================================================================================
+  SUMMARY
+=====================================================================================
+  [FAIL] Instances where Tririga sync was NOT confirmed:
+    1. Instance1_LTD  ->  'Tririga Finished Synch Succesfully' not found in last 1000 lines
+ 
+=====================================================================================
+  Finished at         : 2026-05-14 05:32:21
+  Total instances     : 1
+  OK                  : 0
+  Failed              : 1
+=====================================================================================
+```
+```success text
+=====================================================================================
+  Company Instance Monitor
+  Started at     : 2026-05-14 07:23:53
+  Base directory : /opt/apps/Company
+  Threshold      : 15 minutes
+=====================================================================================
+
+Instances found: 1
+  1. Instance1_LTD
+
+---------------------------------------------
+  Checking: Instance1_LTD
+---------------------------------------------
+    [OK] Log is fresh and Tririga sync confirmed.
+
+=====================================================================================
+  SUMMARY
+=====================================================================================
+  [OK] Instances fully healthy:
+    1. Instance1_LTD
+
+=====================================================================================
+  Finished at         : 2026-05-14 07:23:53
+  Total instances     : 1
+  OK                  : 1
+  Failed              : 0
+=====================================================================================
+
+``` 
+> This output demonstrates failure detection working correctly — the instance was discovered, checked, and the missing sync confirmation was flagged for RCA.
+ 
+---
+ 
+## Visual Output Demo
 <img width="1440" height="2866" alt="image" src="https://github.com/user-attachments/assets/cdafb017-f5a4-4336-a40f-06eadc624e5d" />
