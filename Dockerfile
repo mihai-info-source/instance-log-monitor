@@ -15,7 +15,7 @@ RUN mkdir -p /opt/apps/Company/Instance1_LTD/logs && \
 
 # We grant execution rights
 # Acordăm drepturi de execuție
-RUN chmod +x Company_monitor.py
+RUN chmod +x instance_health_monitor.py
 
 # We run the script indicating the internal location of the data
 # Rulăm scriptul indicând locația internă a datelor
