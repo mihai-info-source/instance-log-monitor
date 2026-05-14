@@ -1,8 +1,8 @@
 # Application Instance Monitor
  
-**Author:** Mihai (Logic, Architecture, Requirements)
+Author: Mihai (Logic, Architecture, Requirements)
 
-Implemented with AI-assisted refactoring and documentation support.
+Engineering : AI-assisted refactoring via Claude & Gemini
  
  
 ## Overview
