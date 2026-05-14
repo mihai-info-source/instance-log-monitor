@@ -22,8 +22,8 @@ RO: Monitorizează instanțele aplicației Company pe servere Linux (Red Hat).
 --------------------------------------------------------------------------------
 Author      : Mihai (Logic, Architecture, Requirements)
 Engineering : AI-assisted refactoring via Claude & Gemini
-Usage       : python3 Company_monitor.py
-              python3 Company_monitor.py --base-dir /opt/apps/Company --threshold 15
+Usage       : python3 instance_health_monitor.py
+              python3 instance_health_monitor.py --base-dir /opt/apps/Company --threshold 15
 --------------------------------------------------------------------------------
 Exit codes / Coduri de ieșire:
     0  —  All instances OK
