@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: instance-monitor
+spec:
+  containers:
+  - name: monitor
+    # Ensure this matches the tag used during 'docker build'
+    image: health-monitor:v2 
+    imagePullPolicy: Never
+  restartPolicy: OnFailure
