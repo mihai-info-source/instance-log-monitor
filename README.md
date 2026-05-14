@@ -60,19 +60,22 @@ It replaces manual log inspection (~2+ hours/day) with automated validation of s
 - Fail-safe logging with `_FAILED` tagging
 - Regex-based detection of batch synchronization activity
 - Single-run execution model (cron-friendly)
+- Dockerized: Fully containerized for portable deployment across different Linux distributions without Python environment management
 
 ---
 
 
 ##  **Usage:**
 
+This tool can be run as a standalone Python script or via Docker for improved isolation and portability.
+
+### Option A: Standalone Script
 No external dependencies required (uses standard Python 3.x libraries).
 
 1. Clone this repository or download `instance_health_monitor.py`.
 2. Ensure the script has execution permissions:
-    ```bash
-    chmod +x instance_health_monitor.py
-    ```
+   ```bash
+   chmod +x instance_health_monitor.py
 3. Run with default settings:
     ```bash
     python3 instance_health_monitor.py
@@ -81,7 +84,28 @@ No external dependencies required (uses standard Python 3.x libraries).
     ```bash
     python3 instance_health_monitor.py --base-dir /custom/path --threshold 30
     ```
+    
+### Option B: Docker (Recommended)
+Containerization ensures a consistent environment and simplifies timezone management.
 
+1. **Build the image:**
+    ```bash
+    docker build -t health-monitor .
+    ```
+
+2. **Run the monitor:**
+    To work correctly, you must map your local instances directory and the system timezone to the container:
+    
+```bash
+    docker run --rm \
+      -v /etc/localtime:/etc/localtime:ro \
+      -v /opt/apps/Company:/opt/apps/Company \
+      health-monitor
+
+    ```
+    *Note: Replace `/opt/apps/Company` with your actual instances path.*
+    ```
+```
 
 ##  **Exit Codes:**
 - **Code 0 (OK):** All discovered instances passed all checks (Fresh log + Sync confirmed).
