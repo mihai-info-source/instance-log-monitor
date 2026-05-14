@@ -144,9 +144,11 @@ The tool is Kubernetes-ready, allowing you to run it as a diagnostic Pod within 
 ---
  
 ## Output Demo
- 
-Real execution output captured from a Kubernetes Pod deployment via `kubectl logs`:
- 
+
+Real execution output captured from a Kubernetes Pod deployment via `kubectl logs`.
+
+### ❌ Failure detected — sync confirmation missing
+
 ```text
 =====================================================================================
   Company Instance Monitor
@@ -154,21 +156,21 @@ Real execution output captured from a Kubernetes Pod deployment via `kubectl log
   Base directory : /opt/apps/Company
   Threshold      : 15 minutes
 =====================================================================================
- 
+
 Instances found: 1
   1. Instance1_LTD
- 
+
 ---------------------------------------------
   Checking: Instance1_LTD
 ---------------------------------------------
     **** ERROR: 'Tririga Finished Synch Succesfully' not found in last 1000 lines ****
- 
+
 =====================================================================================
   SUMMARY
 =====================================================================================
   [FAIL] Instances where Tririga sync was NOT confirmed:
     1. Instance1_LTD  ->  'Tririga Finished Synch Succesfully' not found in last 1000 lines
- 
+
 =====================================================================================
   Finished at         : 2026-05-14 05:32:21
   Total instances     : 1
@@ -176,7 +178,10 @@ Instances found: 1
   Failed              : 1
 =====================================================================================
 ```
-```success text
+
+### ✅ All instances healthy
+
+```text
 =====================================================================================
   Company Instance Monitor
   Started at     : 2026-05-14 07:23:53
@@ -204,8 +209,7 @@ Instances found: 1
   OK                  : 1
   Failed              : 0
 =====================================================================================
-
-``` 
+```
 > This output demonstrates failure detection working correctly — the instance was discovered, checked, and the missing sync confirmation was flagged for RCA.
  
 ---
