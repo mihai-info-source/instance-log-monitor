@@ -2,7 +2,7 @@
  
 Author: Mihai (Logic, Architecture, Requirements)
 
-Engineering : AI-assisted refactoring via Claude & Gemini
+Implementation : AI-assisted refactoring via Claude & Gemini
  
  
 ## Overview
